@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CNN Grid Convolution</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      border: 1px solid #ccc;
+      background-color: white;
+      width: 300px;
+      height: 300px;
+    }
+
+    .step-desc {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Grid Convolution - CNN</h1>
+
+<div class="step-desc">
+  <p>A 3×3 filter slides across a 9×9 grid with stride = 1. Highlighted in blue.</p>
+</div>
+
+<canvas id="cnnCanvas" width="300" height="300"></canvas>
+
+<script>
+const cnnCanvas = document.getElementById('cnnCanvas');
+const cnnCtx = cnnCanvas.getContext('2d');
+
+const gridSize = 9;
+const cellSize = cnnCanvas.width / gridSize;
+let cnnFeatures = [];
+
+for (let y = 0; y < gridSize; y++) {
+  cnnFeatures[y] = [];
+  for (let x = 0; x < gridSize; x++) {
+    cnnFeatures[y][x] = Math.random();
+  }
+}
+
+let strideX = 0;
+let strideY = 0;
+
+function drawCNN() {
+  cnnCtx.clearRect(0, 0, cnnCanvas.width, cnnCanvas.height);
+
+  // Draw grid
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      const value = Math.floor(cnnFeatures[y][x] * 255);
+      cnnCtx.fillStyle = `rgb(${value}, ${value}, ${value})`;
+      cnnCtx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+    }
+  }
+
+  // Draw 3x3 blue window
+  cnnCtx.strokeStyle = 'blue';
+  cnnCtx.lineWidth = 2;
+  cnnCtx.strokeRect(strideX * cellSize, strideY * cellSize, 3 * cellSize, 3 * cellSize);
+
+  // Move the window
+  strideX++;
+  if (strideX > gridSize - 3) {
+    strideX = 0;
+    strideY++;
+    if (strideY > gridSize - 3) {
+      strideY = 0;
+    }
+  }
+}
+
+// Start animation
+window.onload = () => {
+  setInterval(drawCNN, 500);
+};
+</script>
+
+</body>
+</html>
